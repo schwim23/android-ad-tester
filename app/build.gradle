@@ -38,13 +38,6 @@ dependencies {
     implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     
-    // Media3 (ExoPlayer's successor) with IMA extension for video ads
-    implementation 'androidx.media3:media3-exoplayer:1.2.1'
-    implementation 'androidx.media3:media3-ui:1.2.1'
-    implementation 'androidx.media3:media3-exoplayer-ima:1.2.1'
-    
-    // Google IMA SDK for VAST support
-    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.32.0'
     
     // Network requests
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'

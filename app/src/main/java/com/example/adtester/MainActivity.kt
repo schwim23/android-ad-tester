@@ -15,10 +15,6 @@ class MainActivity : AppCompatActivity() {
     }
     
     private fun setupClickListeners() {
-        findViewById<LinearLayout>(R.id.cardVideoAd).setOnClickListener {
-            startActivity(Intent(this, VideoAdActivity::class.java))
-        }
-        
         findViewById<LinearLayout>(R.id.cardBannerAd).setOnClickListener {
             startActivity(Intent(this, BannerAdActivity::class.java))
         }
