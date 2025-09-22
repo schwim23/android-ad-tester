@@ -173,7 +173,7 @@ data class Bid(
 // Native Ad Models (for parsing native responses)
 data class NativeResponse(
     @SerializedName("ver") val version: String? = null,
-    @SerializedName("assets") val assets: List<Asset>,
+    @SerializedName("assets") val assets: List<Asset>? = null,
     @SerializedName("link") val link: Link? = null,
     @SerializedName("imptrackers") val impressionTrackers: List<String>? = null,
     @SerializedName("jstracker") val jsTracker: String? = null,

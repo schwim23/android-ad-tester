@@ -59,8 +59,21 @@ class NativeAdRenderer @JvmOverloads constructor(
         // Clear previous content
         clearAd()
         
+        // Check if assets exist
+        val assets = nativeResponse.assets
+        if (assets.isNullOrEmpty()) {
+            Log.w("NativeAdRenderer", "No assets found in native response")
+            // Still show the container but with placeholder content
+            titleTextView.text = "Native Ad (No Assets)"
+            descriptionTextView.text = "No ad assets available to display"
+            advertiserTextView.text = "Unknown Advertiser"
+            ctaButton.text = "Learn More"
+            adContainer.visibility = View.VISIBLE
+            return
+        }
+        
         // Parse and render assets
-        nativeResponse.assets.forEach { asset ->
+        assets.forEach { asset ->
             renderAsset(asset)
         }
         
@@ -73,7 +86,7 @@ class NativeAdRenderer @JvmOverloads constructor(
         // Show the ad container
         adContainer.visibility = View.VISIBLE
         
-        Log.d("NativeAdRenderer", "Native ad rendered successfully")
+        Log.d("NativeAdRenderer", "Native ad rendered successfully with ${assets.size} assets")
     }
     
     private fun renderAsset(asset: Asset) {

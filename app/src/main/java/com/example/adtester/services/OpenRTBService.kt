@@ -225,8 +225,19 @@ class OpenRTBService(private val context: Context) {
                 return Result.failure(Exception("Ad markup is empty or blank"))
             }
             
-            // Parse the native response from the adm JSON
-            val nativeResponse = gson.fromJson(adMarkup, NativeResponse::class.java)
+            // Parse the ADM JSON which contains a "native" wrapper object
+            val jsonElement = gson.fromJson(adMarkup, com.google.gson.JsonElement::class.java)
+            
+            // Extract the "native" object from the ADM
+            val nativeJsonElement = if (jsonElement.isJsonObject) {
+                val jsonObject = jsonElement.asJsonObject
+                jsonObject.get("native") ?: jsonElement // Try "native" first, fallback to root
+            } else {
+                return Result.failure(Exception("ADM is not a valid JSON object"))
+            }
+            
+            // Parse the native response from the extracted JSON
+            val nativeResponse = gson.fromJson(nativeJsonElement, NativeResponse::class.java)
                 ?: return Result.failure(Exception("Failed to parse native response - result is null"))
             
             Result.success(nativeResponse)
