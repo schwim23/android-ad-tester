@@ -49,18 +49,28 @@ class VideoAdActivity : AppCompatActivity() {
     }
     
     private fun initializePlayer() {
+        // Create ads loader first
         adsLoader = ImaAdsLoader.Builder(this).build()
         
+        // Create data source factory
         val dataSourceFactory: DataSource.Factory = DefaultDataSource.Factory(this)
+        
+        // Create media source factory with ads support
         val mediaSourceFactory: MediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
             .setAdsLoaderProvider { adsLoader }
             .setAdViewProvider(playerView)
         
+        // Create ExoPlayer with the media source factory
         player = ExoPlayer.Builder(this)
             .setMediaSourceFactory(mediaSourceFactory)
             .build()
         
+        // CRITICAL: Set the player to ads loader BEFORE setting up any media
         adsLoader?.setPlayer(player)
+        
+        // Connect player to the view LAST
+        playerView.player = player
+        
         android.util.Log.d("VideoAdActivity", "Player and ads loader initialized")
         
         player.addListener(object : Player.Listener {
@@ -106,16 +116,26 @@ class VideoAdActivity : AppCompatActivity() {
             }
             
             override fun onTimelineChanged(timeline: androidx.media3.common.Timeline, reason: Int) {
-                android.util.Log.d("VideoAdActivity", "Timeline changed - window count: ${timeline.windowCount}")
+                val reasonString = when (reason) {
+                    Player.TIMELINE_CHANGE_REASON_PLAYLIST_CHANGED -> "PLAYLIST_CHANGED"
+                    Player.TIMELINE_CHANGE_REASON_SOURCE_UPDATE -> "SOURCE_UPDATE"
+                    else -> "OTHER"
+                }
+                android.util.Log.d("VideoAdActivity", "Timeline changed (reason: $reasonString) - window count: ${timeline.windowCount}")
+                
                 for (i in 0 until timeline.windowCount) {
                     val window = androidx.media3.common.Timeline.Window()
                     timeline.getWindow(i, window)
                     android.util.Log.d("VideoAdActivity", "Window $i: duration=${window.durationMs}ms, defaultPositionMs=${window.defaultPositionMs}")
                 }
+                
+                // Check if we have multiple windows which might indicate ads
+                if (timeline.windowCount > 1) {
+                    android.util.Log.d("VideoAdActivity", "Multiple windows detected - ads may be present")
+                    Toast.makeText(this@VideoAdActivity, "Ads detected in timeline", Toast.LENGTH_SHORT).show()
+                }
             }
         })
-        
-        playerView.player = player
     }
     
     private fun startPlaybackMonitoring() {
@@ -171,23 +191,32 @@ class VideoAdActivity : AppCompatActivity() {
             
             val contentVideoUrl = "https://storage.googleapis.com/gvabox/media/samples/stock.mp4"
             
+            // Stop and reset player state
             player.stop()
             player.clearMediaItems()
             
+            // Create MediaItem with ads configuration
+            val adsConfiguration = MediaItem.AdsConfiguration.Builder(android.net.Uri.parse(finalAdTagUrl))
+                .build()
+            
             val mediaItem = MediaItem.Builder()
                 .setUri(contentVideoUrl)
-                .setAdsConfiguration(
-                    MediaItem.AdsConfiguration.Builder(android.net.Uri.parse(finalAdTagUrl))
-                        .build()
-                )
+                .setAdsConfiguration(adsConfiguration)
                 .build()
             
             android.util.Log.d("VideoAdActivity", "MediaItem created with content: $contentVideoUrl")
+            android.util.Log.d("VideoAdActivity", "Ad tag URL: $finalAdTagUrl")
             android.util.Log.d("VideoAdActivity", "Setting MediaItem to player...")
             
+            // Set media item and prepare
             player.setMediaItem(mediaItem)
             player.prepare()
-            player.playWhenReady = true
+            
+            // Wait a moment before setting playWhenReady to allow ads loader to initialize
+            handler.postDelayed({
+                android.util.Log.d("VideoAdActivity", "Starting playback after delay...")
+                player.playWhenReady = true
+            }, 500) // 500ms delay
             
             Toast.makeText(this, "Loading VAST ad (${timestamp})", Toast.LENGTH_SHORT).show()
             
