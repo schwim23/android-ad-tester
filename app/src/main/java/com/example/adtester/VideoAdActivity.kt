@@ -28,20 +28,60 @@ class VideoAdActivity : AppCompatActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_video_ad)
+        Log.d("VideoAdActivity", "onCreate started")
         
-        initializeViews()
-        initializePlayer()
-        setupClickListeners()
+        try {
+            setContentView(R.layout.activity_video_ad)
+            Log.d("VideoAdActivity", "Layout set successfully")
+            
+            initializeViews()
+            Log.d("VideoAdActivity", "Views initialized successfully")
+            
+            initializePlayer()
+            Log.d("VideoAdActivity", "Player initialized successfully")
+            
+            setupClickListeners()
+            Log.d("VideoAdActivity", "Click listeners set up successfully")
+            
+        } catch (e: Exception) {
+            Log.e("VideoAdActivity", "Error in onCreate", e)
+            Toast.makeText(this, "Error initializing video screen: ${e.message}", Toast.LENGTH_LONG).show()
+        }
     }
     
     private fun initializeViews() {
-        playerView = findViewById(R.id.playerView)
-        etAdTagUrl = findViewById(R.id.etAdTagUrl)
-        btnLoadAd = findViewById(R.id.btnLoadAd)
-        btnBack = findViewById(R.id.btnBack)
-        btnSampleVast1 = findViewById(R.id.btnSampleVast1)
-        btnSampleVast2 = findViewById(R.id.btnSampleVast2)
+        try {
+            playerView = findViewById(R.id.playerView)
+            Log.d("VideoAdActivity", "PlayerView found: ${playerView != null}")
+            
+            etAdTagUrl = findViewById(R.id.etAdTagUrl)
+            Log.d("VideoAdActivity", "EditText found: ${etAdTagUrl != null}")
+            
+            btnLoadAd = findViewById(R.id.btnLoadAd)
+            Log.d("VideoAdActivity", "Load button found: ${btnLoadAd != null}")
+            
+            btnBack = findViewById(R.id.btnBack)
+            Log.d("VideoAdActivity", "Back button found: ${btnBack != null}")
+            
+            btnSampleVast1 = findViewById(R.id.btnSampleVast1)
+            Log.d("VideoAdActivity", "Sample button 1 found: ${btnSampleVast1 != null}")
+            
+            btnSampleVast2 = findViewById(R.id.btnSampleVast2)
+            Log.d("VideoAdActivity", "Sample button 2 found: ${btnSampleVast2 != null}")
+            
+            // Make views explicitly visible
+            etAdTagUrl.visibility = android.view.View.VISIBLE
+            btnLoadAd.visibility = android.view.View.VISIBLE
+            btnSampleVast1.visibility = android.view.View.VISIBLE
+            btnSampleVast2.visibility = android.view.View.VISIBLE
+            playerView.visibility = android.view.View.VISIBLE
+            
+            Log.d("VideoAdActivity", "All views set to visible")
+            
+        } catch (e: Exception) {
+            Log.e("VideoAdActivity", "Error initializing views", e)
+            throw e
+        }
     }
     
     private fun initializePlayer() {
