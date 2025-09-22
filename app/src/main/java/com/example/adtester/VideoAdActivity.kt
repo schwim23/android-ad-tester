@@ -47,11 +47,6 @@ class VideoAdActivity : AppCompatActivity() {
     private fun initializePlayer() {
         adsLoader = ImaAdsLoader.Builder(this).build()
         
-        // Add ads loader listener for debugging
-        adsLoader?.addAdsLoadedListener { adEvent ->
-            android.util.Log.d("VideoAdActivity", "Ads loaded: ${adEvent.type}")
-        }
-        
         val dataSourceFactory: DataSource.Factory = DefaultDataSource.Factory(this)
         val mediaSourceFactory: MediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
             .setAdsLoaderProvider { adsLoader }
@@ -85,8 +80,10 @@ class VideoAdActivity : AppCompatActivity() {
                         Toast.makeText(this@VideoAdActivity, "Loading...", Toast.LENGTH_SHORT).show()
                     }
                     Player.STATE_READY -> {
-                        android.util.Log.d("VideoAdActivity", "Player ready - checking if playing ads")
-                        Toast.makeText(this@VideoAdActivity, "Ready to play", Toast.LENGTH_SHORT).show()
+                        val isAd = player.isPlayingAd
+                        val currentWindowIndex = player.currentWindowIndex
+                        android.util.Log.d("VideoAdActivity", "Player ready - isPlayingAd: $isAd, currentWindow: $currentWindowIndex")
+                        Toast.makeText(this@VideoAdActivity, if (isAd) "Ad ready to play" else "Content ready to play", Toast.LENGTH_SHORT).show()
                     }
                     Player.STATE_ENDED -> {
                         android.util.Log.d("VideoAdActivity", "Playback ended")
@@ -97,6 +94,15 @@ class VideoAdActivity : AppCompatActivity() {
             
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 android.util.Log.d("VideoAdActivity", "Is playing changed: $isPlaying")
+            }
+            
+            override fun onTimelineChanged(timeline: androidx.media3.common.Timeline, reason: Int) {
+                android.util.Log.d("VideoAdActivity", "Timeline changed - window count: ${timeline.windowCount}")
+                for (i in 0 until timeline.windowCount) {
+                    val window = androidx.media3.common.Timeline.Window()
+                    timeline.getWindow(i, window)
+                    android.util.Log.d("VideoAdActivity", "Window $i: isAd=${window.isAd}, duration=${window.durationMs}ms")
+                }
             }
         })
         
