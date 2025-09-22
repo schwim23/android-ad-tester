@@ -23,7 +23,6 @@ class VideoAdActivity : AppCompatActivity() {
     private lateinit var btnLoadAd: Button
     private lateinit var btnBack: Button
     private lateinit var btnSampleVast1: Button
-    private lateinit var btnSampleVast2: Button
     private var adsLoader: ImaAdsLoader? = null
     
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,16 +63,12 @@ class VideoAdActivity : AppCompatActivity() {
             Log.d("VideoAdActivity", "Back button found: ${btnBack != null}")
             
             btnSampleVast1 = findViewById(R.id.btnSampleVast1)
-            Log.d("VideoAdActivity", "Sample button 1 found: ${btnSampleVast1 != null}")
-            
-            btnSampleVast2 = findViewById(R.id.btnSampleVast2)
-            Log.d("VideoAdActivity", "Sample button 2 found: ${btnSampleVast2 != null}")
+            Log.d("VideoAdActivity", "Sample button found: ${btnSampleVast1 != null}")
             
             // Make views explicitly visible
             etAdTagUrl.visibility = android.view.View.VISIBLE
             btnLoadAd.visibility = android.view.View.VISIBLE
             btnSampleVast1.visibility = android.view.View.VISIBLE
-            btnSampleVast2.visibility = android.view.View.VISIBLE
             playerView.visibility = android.view.View.VISIBLE
             
             Log.d("VideoAdActivity", "All views set to visible")
@@ -149,14 +144,8 @@ class VideoAdActivity : AppCompatActivity() {
         }
         
         btnSampleVast1.setOnClickListener {
-            // Use the new moloco demo VAST tag
-            val vastTag = "https://pubads.g.doubleclick.net/gampad/ads?iu=/10236567/moloco_demo&description_url=http%3A%2F%2Fwww.google.com&tfcd=0&npa=0&sz=640x480%7C728x90&gdfp_req=1&unviewed_position_start=1&output=vast&env=vp&impl=s&correlator=&vad_type=linear"
-            etAdTagUrl.setText(vastTag)
-        }
-        
-        btnSampleVast2.setOnClickListener {
-            // Linear ad sample
-            val vastTag = "https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_ad_samples&sz=400x300&cust_params=sample_ct%3Dlinear&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=${System.currentTimeMillis()}"
+            // Use the simplified moloco demo VAST tag
+            val vastTag = "https://pubads.g.doubleclick.net/gampad/ads?iu=/10236567/moloco_demo&tfcd=0&npa=0&sz=640x480%7C728x90&gdfp_req=1&unviewed_position_start=1&output=vast&env=vp&impl=s&correlator=&vad_type=linear"
             etAdTagUrl.setText(vastTag)
         }
     }
