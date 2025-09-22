@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@android:color/white">
 
     <!-- Header -->
     <LinearLayout
@@ -11,7 +11,9 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="16dp"
+        android:padding="16dp"
+        android:background="#f5f5f5">
 
         <Button
             android:id="@+id/btnBack"
@@ -29,7 +31,8 @@
             android:text="VAST Video Ad Player"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:textColor="@android:color/black" />
 
         <View
             android:layout_width="80dp"
@@ -37,84 +40,127 @@
 
     </LinearLayout>
 
-    <!-- URL Input Section -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="VAST Ad Tag URL:"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp" />
-
-    <EditText
-        android:id="@+id/etAdTagUrl"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginBottom="16dp"
-        android:hint="Enter VAST Ad Tag URL"
-        android:inputType="textUri"
-        android:background="@android:drawable/edit_text"
-        android:padding="12dp"
-        android:text="https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_preroll_skippable&amp;sz=400x300&amp;ciu_szs=300x250%2C728x90&amp;gdfp_req=1&amp;output=vast&amp;unviewed_position_start=1&amp;env=vp&amp;impl=s&amp;correlator=%%CACHEBUSTER%%" />
-
-    <!-- Sample VAST Tags -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Sample VAST Tags:"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="16dp">
-
-        <Button
-            android:id="@+id/btnSampleVast1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            android:text="Skippable Preroll"
-            android:textSize="12sp" />
-
-        <Button
-            android:id="@+id/btnSampleVast2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Linear Ad"
-            android:textSize="12sp" />
-
-    </LinearLayout>
-
-    <!-- Load Ad Button -->
-    <Button
-        android:id="@+id/btnLoadAd"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Load VAST Ad"
-        android:layout_marginBottom="8dp"
-        android:textSize="16sp" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Note: The ad will play first (preroll), then the content video will follow."
-        android:textSize="12sp"
-        android:textColor="@android:color/darker_gray"
-        android:textAlignment="center"
-        android:layout_marginBottom="16dp" />
-
-    <!-- Video Player -->
-    <androidx.media3.ui.PlayerView
-        android:id="@+id/playerView"
+    <!-- Content Area with ScrollView -->
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="#000000" />
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- URL Input Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="VAST Ad Tag URL:"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:layout_marginBottom="8dp" />
+
+            <EditText
+                android:id="@+id/etAdTagUrl"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginBottom="16dp"
+                android:hint="Enter VAST Ad Tag URL"
+                android:inputType="textUri"
+                android:background="#f0f0f0"
+                android:padding="12dp"
+                android:textSize="12sp"
+                android:textColor="@android:color/black"
+                android:text="https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_preroll_skippable&amp;sz=400x300&amp;ciu_szs=300x250%2C728x90&amp;gdfp_req=1&amp;output=vast&amp;unviewed_position_start=1&amp;env=vp&amp;impl=s&amp;correlator=%%CACHEBUSTER%%" />
+
+            <!-- Sample VAST Tags -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sample VAST Tags:"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:layout_marginBottom="8dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <Button
+                    android:id="@+id/btnSampleVast1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:text="Skippable Preroll"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/btnSampleVast2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Linear Ad"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <!-- Load Ad Button -->
+            <Button
+                android:id="@+id/btnLoadAd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Load VAST Ad"
+                android:layout_marginBottom="8dp"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Note: The ad will play first (preroll), then the content video will follow."
+                android:textSize="12sp"
+                android:textColor="@android:color/darker_gray"
+                android:textAlignment="center"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Video Player Container -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginBottom="16dp"
+                android:background="#000000">
+
+                <androidx.media3.ui.PlayerView
+                    android:id="@+id/playerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#000000" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Video Player\n(Tap Load VAST Ad to start)"
+                    android:textColor="@android:color/white"
+                    android:textAlignment="center"
+                    android:textSize="14sp"
+                    android:padding="16dp" />
+
+            </FrameLayout>
+
+            <!-- Additional Space for Scrolling -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="100dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>
