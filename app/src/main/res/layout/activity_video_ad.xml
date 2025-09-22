@@ -1,101 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@android:color/white">
+    android:background="#f0f0f0">
 
-    <!-- Header -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="24dp">
-
-        <Button
-            android:id="@+id/btnBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="← Back"
-            android:textSize="16sp" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="VAST Video Ad Player"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textAlignment="center"
-            android:textColor="@android:color/black" />
-
-        <View
-            android:layout_width="80dp"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-
-    <!-- URL Input -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="VAST Ad Tag URL:"
+    <!-- Back Button -->
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_margin="16dp"
+        android:text="← Back"
         android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:layout_marginBottom="8dp" />
+        android:background="#00ff00" />
 
+    <!-- Title -->
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="24dp"
+        android:text="VAST Video Ad Player"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#ffffff"
+        android:background="#000000"
+        android:padding="8dp" />
+
+    <!-- EditText -->
     <EditText
         android:id="@+id/etAdTagUrl"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minLines="3"
-        android:maxLines="5"
-        android:layout_marginBottom="16dp"
+        android:layout_height="80dp"
+        android:layout_below="@id/title"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:hint="Enter VAST Ad Tag URL"
-        android:inputType="textMultiLine|textUri"
+        android:inputType="textUri"
         android:padding="12dp"
         android:textSize="14sp"
-        android:background="@android:drawable/edit_text"
+        android:textColor="#000000"
+        android:background="#ffffff"
         android:text="https://pubads.g.doubleclick.net/gampad/ads?iu=/10236567/moloco_demo&amp;tfcd=0&amp;npa=0&amp;sz=640x480%7C728x90&amp;gdfp_req=1&amp;unviewed_position_start=1&amp;output=vast&amp;env=vp&amp;impl=s&amp;correlator=&amp;vad_type=linear" />
 
-    <!-- Buttons -->
-    <LinearLayout
+    <!-- Sample Button -->
+    <Button
+        android:id="@+id/btnSampleVast1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="16dp">
+        android:layout_height="60dp"
+        android:layout_below="@id/etAdTagUrl"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="Use Sample Ad Tag"
+        android:textSize="14sp"
+        android:background="#0000ff"
+        android:textColor="#ffffff" />
 
-        <Button
-            android:id="@+id/btnSampleVast1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            android:text="Use Sample"
-            android:textSize="14sp" />
-
-        <Button
-            android:id="@+id/btnLoadAd"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp"
-            android:text="Load VAST Ad"
-            android:textSize="14sp"
-            android:backgroundTint="@android:color/holo_green_dark"
-            android:textColor="@android:color/white" />
-
-    </LinearLayout>
+    <!-- Load Ad Button -->
+    <Button
+        android:id="@+id/btnLoadAd"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_below="@id/btnSampleVast1"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="LOAD VAST AD"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:background="#4CAF50"
+        android:textColor="#ffffff" />
 
     <!-- Video Player -->
     <androidx.media3.ui.PlayerView
         android:id="@+id/playerView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@android:color/black" />
+        android:layout_height="200dp"
+        android:layout_below="@id/btnLoadAd"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="#333333" />
 
-</LinearLayout>
+</RelativeLayout>
