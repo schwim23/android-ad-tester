@@ -127,7 +127,7 @@ data class Segment(
 // OpenRTB Bid Response Models
 data class BidResponse(
     @SerializedName("id") val id: String,
-    @SerializedName("seatbid") val seatBid: List<SeatBid>,
+    @SerializedName("seatbid") val seatBid: List<SeatBid>? = null,
     @SerializedName("bidid") val bidId: String? = null,
     @SerializedName("cur") val currency: String = "USD",
     @SerializedName("customdata") val customData: String? = null,
@@ -135,7 +135,7 @@ data class BidResponse(
 )
 
 data class SeatBid(
-    @SerializedName("bid") val bids: List<Bid>,
+    @SerializedName("bid") val bids: List<Bid>? = null,
     @SerializedName("seat") val seat: String? = null,
     @SerializedName("group") val group: Int = 0
 )

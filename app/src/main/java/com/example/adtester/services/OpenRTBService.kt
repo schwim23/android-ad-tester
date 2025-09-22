@@ -221,16 +221,29 @@ class OpenRTBService(private val context: Context) {
     
     fun parseNativeResponse(adMarkup: String): Result<NativeResponse> {
         return try {
+            if (adMarkup.isBlank()) {
+                return Result.failure(Exception("Ad markup is empty or blank"))
+            }
+            
+            // Parse the native response from the adm JSON
             val nativeResponse = gson.fromJson(adMarkup, NativeResponse::class.java)
+                ?: return Result.failure(Exception("Failed to parse native response - result is null"))
+            
             Result.success(nativeResponse)
         } catch (e: Exception) {
-            Result.failure(e)
+            Result.failure(Exception("Failed to parse native response JSON: ${e.message}", e))
         }
     }
     
     fun parseBidResponseFromJson(bidResponseJson: String): Result<BidResponse> {
         return try {
+            if (bidResponseJson.isBlank()) {
+                return Result.failure(Exception("Bid response JSON is empty or blank"))
+            }
+            
             val bidResponse = gson.fromJson(bidResponseJson, BidResponse::class.java)
+                ?: return Result.failure(Exception("Failed to parse bid response - result is null"))
+                
             Result.success(bidResponse)
         } catch (e: Exception) {
             Result.failure(Exception("Failed to parse bid response JSON: ${e.message}", e))
@@ -239,9 +252,23 @@ class OpenRTBService(private val context: Context) {
     
     fun processAdResponse(bidResponse: BidResponse): Result<NativeResponse> {
         return try {
-            // Get the first bid from the first seatbid
-            val bid = bidResponse.seatBid.firstOrNull()?.bids?.firstOrNull()
-                ?: return Result.failure(Exception("No bids found in response"))
+            // Check if seatBid list exists and is not empty
+            if (bidResponse.seatBid.isNullOrEmpty()) {
+                return Result.failure(Exception("No seat bids found in response"))
+            }
+            
+            // Get the first seatbid
+            val seatBid = bidResponse.seatBid.firstOrNull()
+                ?: return Result.failure(Exception("No seat bid found in response"))
+            
+            // Check if bids list exists and is not empty
+            if (seatBid.bids.isNullOrEmpty()) {
+                return Result.failure(Exception("No bids found in seat bid"))
+            }
+            
+            // Get the first bid
+            val bid = seatBid.bids.firstOrNull()
+                ?: return Result.failure(Exception("No bid found in bids list"))
             
             // Extract the adm (ad markup) field
             val adMarkup = bid.adMarkup
@@ -250,7 +277,7 @@ class OpenRTBService(private val context: Context) {
             // Parse the native response from adm
             parseNativeResponse(adMarkup)
         } catch (e: Exception) {
-            Result.failure(e)
+            Result.failure(Exception("Error processing ad response: ${e.message}", e))
         }
     }
 }
