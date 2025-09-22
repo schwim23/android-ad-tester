@@ -13,6 +13,8 @@ import androidx.media3.exoplayer.source.MediaSourceFactory
 import androidx.media3.ui.PlayerView
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.common.Player
+import androidx.media3.common.PlaybackException
 import android.widget.EditText
 
 class VideoAdActivity : AppCompatActivity() {
@@ -27,56 +29,19 @@ class VideoAdActivity : AppCompatActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("VideoAdActivity", "onCreate started")
+        setContentView(R.layout.activity_video_ad)
         
-        try {
-            setContentView(R.layout.activity_video_ad)
-            Log.d("VideoAdActivity", "Layout set successfully")
-            
-            initializeViews()
-            Log.d("VideoAdActivity", "Views initialized successfully")
-            
-            initializePlayer()
-            Log.d("VideoAdActivity", "Player initialized successfully")
-            
-            setupClickListeners()
-            Log.d("VideoAdActivity", "Click listeners set up successfully")
-            
-        } catch (e: Exception) {
-            Log.e("VideoAdActivity", "Error in onCreate", e)
-            Toast.makeText(this, "Error initializing video screen: ${e.message}", Toast.LENGTH_LONG).show()
-        }
+        initializeViews()
+        initializePlayer()
+        setupClickListeners()
     }
     
     private fun initializeViews() {
-        try {
-            playerView = findViewById(R.id.playerView)
-            Log.d("VideoAdActivity", "PlayerView found: ${playerView != null}")
-            
-            etAdTagUrl = findViewById(R.id.etAdTagUrl)
-            Log.d("VideoAdActivity", "EditText found: ${etAdTagUrl != null}")
-            
-            btnLoadAd = findViewById(R.id.btnLoadAd)
-            Log.d("VideoAdActivity", "Load button found: ${btnLoadAd != null}")
-            
-            btnBack = findViewById(R.id.btnBack)
-            Log.d("VideoAdActivity", "Back button found: ${btnBack != null}")
-            
-            btnSampleVast1 = findViewById(R.id.btnSampleVast1)
-            Log.d("VideoAdActivity", "Sample button found: ${btnSampleVast1 != null}")
-            
-            // Make views explicitly visible
-            etAdTagUrl.visibility = android.view.View.VISIBLE
-            btnLoadAd.visibility = android.view.View.VISIBLE
-            btnSampleVast1.visibility = android.view.View.VISIBLE
-            playerView.visibility = android.view.View.VISIBLE
-            
-            Log.d("VideoAdActivity", "All views set to visible")
-            
-        } catch (e: Exception) {
-            Log.e("VideoAdActivity", "Error initializing views", e)
-            throw e
-        }
+        playerView = findViewById(R.id.playerView)
+        etAdTagUrl = findViewById(R.id.etAdTagUrl)
+        btnLoadAd = findViewById(R.id.btnLoadAd)
+        btnBack = findViewById(R.id.btnBack)
+        btnSampleVast1 = findViewById(R.id.btnSampleVast1)
     }
     
     private fun initializePlayer() {
@@ -91,38 +56,25 @@ class VideoAdActivity : AppCompatActivity() {
             .setMediaSourceFactory(mediaSourceFactory)
             .build()
         
-        // IMPORTANT: Set player to adsLoader before preparing
         adsLoader?.setPlayer(player)
         
-        // Add comprehensive player listener
-        player.addListener(object : androidx.media3.common.Player.Listener {
-            override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
-                Log.e("VideoAdActivity", "Player error: ${error.message}", error)
+        player.addListener(object : Player.Listener {
+            override fun onPlayerError(error: PlaybackException) {
                 Toast.makeText(this@VideoAdActivity, "Playback error: ${error.message}", Toast.LENGTH_LONG).show()
             }
             
             override fun onPlaybackStateChanged(playbackState: Int) {
                 when (playbackState) {
-                    androidx.media3.common.Player.STATE_IDLE -> {
-                        Log.d("VideoAdActivity", "Player state: IDLE")
-                    }
-                    androidx.media3.common.Player.STATE_BUFFERING -> {
-                        Log.d("VideoAdActivity", "Player state: BUFFERING")
+                    Player.STATE_BUFFERING -> {
                         Toast.makeText(this@VideoAdActivity, "Loading...", Toast.LENGTH_SHORT).show()
                     }
-                    androidx.media3.common.Player.STATE_READY -> {
-                        Log.d("VideoAdActivity", "Player state: READY")
+                    Player.STATE_READY -> {
                         Toast.makeText(this@VideoAdActivity, "Ready to play", Toast.LENGTH_SHORT).show()
                     }
-                    androidx.media3.common.Player.STATE_ENDED -> {
-                        Log.d("VideoAdActivity", "Player state: ENDED")
+                    Player.STATE_ENDED -> {
                         Toast.makeText(this@VideoAdActivity, "Playback finished", Toast.LENGTH_SHORT).show()
                     }
                 }
-            }
-            
-            override fun onIsPlayingChanged(isPlaying: Boolean) {
-                Log.d("VideoAdActivity", "Is playing: $isPlaying")
             }
         })
         
@@ -144,7 +96,6 @@ class VideoAdActivity : AppCompatActivity() {
         }
         
         btnSampleVast1.setOnClickListener {
-            // Use the simplified moloco demo VAST tag
             val vastTag = "https://pubads.g.doubleclick.net/gampad/ads?iu=/10236567/moloco_demo&tfcd=0&npa=0&sz=640x480%7C728x90&gdfp_req=1&unviewed_position_start=1&output=vast&env=vp&impl=s&correlator=&vad_type=linear"
             etAdTagUrl.setText(vastTag)
         }
@@ -152,51 +103,34 @@ class VideoAdActivity : AppCompatActivity() {
     
     private fun loadVastAd(adTagUrl: String) {
         try {
-            Log.d("VideoAdActivity", "Starting to load VAST ad from: $adTagUrl")
-            
-            // Replace cachebuster placeholder with current timestamp
-            val finalAdTagUrl = adTagUrl.replace("%%CACHEBUSTER%%", System.currentTimeMillis().toString())
-            Log.d("VideoAdActivity", "Final VAST tag URL: $finalAdTagUrl")
-            
-            // Create a sample content video URL - this will play after the ad
             val contentVideoUrl = "https://storage.googleapis.com/gvabox/media/samples/stock.mp4"
             
-            // Reset player first
             player.stop()
             player.clearMediaItems()
             
-            // Create media item with ad tag configuration
             val mediaItem = MediaItem.Builder()
                 .setUri(contentVideoUrl)
                 .setAdsConfiguration(
-                    MediaItem.AdsConfiguration.Builder(android.net.Uri.parse(finalAdTagUrl))
+                    MediaItem.AdsConfiguration.Builder(android.net.Uri.parse(adTagUrl))
                         .build()
                 )
                 .build()
             
-            Log.d("VideoAdActivity", "Media item created with VAST tag, setting to player")
-            
-            // Set the media item and prepare the player
             player.setMediaItem(mediaItem)
             player.prepare()
             player.playWhenReady = true
             
-            Log.d("VideoAdActivity", "Player prepared and set to play - VAST ad should load first")
-            Toast.makeText(this, "Loading VAST ad... Watch for preroll ad!", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Loading VAST ad...", Toast.LENGTH_SHORT).show()
             
         } catch (e: Exception) {
-            Log.e("VideoAdActivity", "Error loading VAST ad", e)
-            e.printStackTrace()
             Toast.makeText(this, "Error loading ad: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
     
     override fun onDestroy() {
         super.onDestroy()
-        adsLoader?.let { adsLoader ->
-            adsLoader.setPlayer(null)
-            adsLoader.release()
-        }
+        adsLoader?.setPlayer(null)
+        adsLoader?.release()
         player.release()
     }
     
@@ -207,8 +141,6 @@ class VideoAdActivity : AppCompatActivity() {
     
     override fun onResume() {
         super.onResume()
-        if (player.playbackState != androidx.media3.common.Player.STATE_IDLE) {
-            player.play()
-        }
+        player.play()
     }
 }
