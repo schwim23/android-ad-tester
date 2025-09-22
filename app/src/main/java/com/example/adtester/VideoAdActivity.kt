@@ -149,8 +149,8 @@ class VideoAdActivity : AppCompatActivity() {
         }
         
         btnSampleVast1.setOnClickListener {
-            // Use your provided skippable preroll VAST tag with cachebuster
-            val vastTag = "https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_preroll_skippable&sz=400x300&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=${System.currentTimeMillis()}"
+            // Use the new moloco demo VAST tag
+            val vastTag = "https://pubads.g.doubleclick.net/gampad/ads?iu=/10236567/moloco_demo&description_url=http%3A%2F%2Fwww.google.com&tfcd=0&npa=0&sz=640x480%7C728x90&gdfp_req=1&unviewed_position_start=1&output=vast&env=vp&impl=s&correlator=&vad_type=linear"
             etAdTagUrl.setText(vastTag)
         }
         
