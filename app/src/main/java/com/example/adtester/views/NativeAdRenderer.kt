@@ -66,7 +66,7 @@ class NativeAdRenderer @JvmOverloads constructor(
             // Still show the container but with placeholder content
             titleTextView.text = "Native Ad (No Assets)"
             descriptionTextView.text = "No ad assets available to display"
-            advertiserTextView.text = "Unknown Advertiser"
+            sponsoredTextView.text = "Unknown Advertiser"
             ctaButton.text = "Learn More"
             adContainer.visibility = View.VISIBLE
             return
