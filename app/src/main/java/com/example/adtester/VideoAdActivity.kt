@@ -47,6 +47,11 @@ class VideoAdActivity : AppCompatActivity() {
     private fun initializePlayer() {
         adsLoader = ImaAdsLoader.Builder(this).build()
         
+        // Add ads loader listener for debugging
+        adsLoader?.addAdsLoadedListener { adEvent ->
+            android.util.Log.d("VideoAdActivity", "Ads loaded: ${adEvent.type}")
+        }
+        
         val dataSourceFactory: DataSource.Factory = DefaultDataSource.Factory(this)
         val mediaSourceFactory: MediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
             .setAdsLoaderProvider { adsLoader }
@@ -57,24 +62,41 @@ class VideoAdActivity : AppCompatActivity() {
             .build()
         
         adsLoader?.setPlayer(player)
+        android.util.Log.d("VideoAdActivity", "Player and ads loader initialized")
         
         player.addListener(object : Player.Listener {
             override fun onPlayerError(error: PlaybackException) {
+                android.util.Log.e("VideoAdActivity", "Player error: ${error.message}", error)
                 Toast.makeText(this@VideoAdActivity, "Playback error: ${error.message}", Toast.LENGTH_LONG).show()
             }
             
             override fun onPlaybackStateChanged(playbackState: Int) {
+                val stateString = when (playbackState) {
+                    Player.STATE_IDLE -> "IDLE"
+                    Player.STATE_BUFFERING -> "BUFFERING" 
+                    Player.STATE_READY -> "READY"
+                    Player.STATE_ENDED -> "ENDED"
+                    else -> "UNKNOWN"
+                }
+                android.util.Log.d("VideoAdActivity", "Player state changed to: $stateString")
+                
                 when (playbackState) {
                     Player.STATE_BUFFERING -> {
                         Toast.makeText(this@VideoAdActivity, "Loading...", Toast.LENGTH_SHORT).show()
                     }
                     Player.STATE_READY -> {
+                        android.util.Log.d("VideoAdActivity", "Player ready - checking if playing ads")
                         Toast.makeText(this@VideoAdActivity, "Ready to play", Toast.LENGTH_SHORT).show()
                     }
                     Player.STATE_ENDED -> {
+                        android.util.Log.d("VideoAdActivity", "Playback ended")
                         Toast.makeText(this@VideoAdActivity, "Playback finished", Toast.LENGTH_SHORT).show()
                     }
                 }
+            }
+            
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
+                android.util.Log.d("VideoAdActivity", "Is playing changed: $isPlaying")
             }
         })
         
@@ -96,7 +118,7 @@ class VideoAdActivity : AppCompatActivity() {
         }
         
         btnSampleVast1.setOnClickListener {
-            val vastTag = "https://pubads.g.doubleclick.net/gampad/ads?iu=/10236567/moloco_demo&tfcd=0&npa=0&sz=640x480%7C728x90&gdfp_req=1&unviewed_position_start=1&output=vast&env=vp&impl=s&correlator=%%CACHEBUSTER%%&vad_type=linear"
+            val vastTag = "https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_preroll_skippable&sz=640x360&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=%%CACHEBUSTER%%"
             etAdTagUrl.setText(vastTag)
         }
     }
@@ -104,7 +126,12 @@ class VideoAdActivity : AppCompatActivity() {
     private fun loadVastAd(adTagUrl: String) {
         try {
             // Replace cache buster macro with current timestamp
-            val finalAdTagUrl = adTagUrl.replace("%%CACHEBUSTER%%", System.currentTimeMillis().toString())
+            val timestamp = System.currentTimeMillis().toString()
+            val finalAdTagUrl = adTagUrl.replace("%%CACHEBUSTER%%", timestamp)
+            
+            android.util.Log.d("VideoAdActivity", "Original URL: $adTagUrl")
+            android.util.Log.d("VideoAdActivity", "Final URL with cache buster: $finalAdTagUrl")
+            android.util.Log.d("VideoAdActivity", "Cache buster timestamp: $timestamp")
             
             val contentVideoUrl = "https://storage.googleapis.com/gvabox/media/samples/stock.mp4"
             
@@ -119,13 +146,17 @@ class VideoAdActivity : AppCompatActivity() {
                 )
                 .build()
             
+            android.util.Log.d("VideoAdActivity", "MediaItem created with content: $contentVideoUrl")
+            android.util.Log.d("VideoAdActivity", "Setting MediaItem to player...")
+            
             player.setMediaItem(mediaItem)
             player.prepare()
             player.playWhenReady = true
             
-            Toast.makeText(this, "Loading VAST ad with cache buster: ${System.currentTimeMillis()}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Loading VAST ad (${timestamp})", Toast.LENGTH_SHORT).show()
             
         } catch (e: Exception) {
+            android.util.Log.e("VideoAdActivity", "Error loading VAST ad", e)
             Toast.makeText(this, "Error loading ad: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
