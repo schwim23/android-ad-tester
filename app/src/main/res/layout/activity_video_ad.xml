@@ -46,7 +46,7 @@
         android:textSize="14sp"
         android:textColor="#000000"
         android:background="#ffffff"
-        android:text="https://pubads.g.doubleclick.net/gampad/ads?iu=/10236567/moloco_demo&amp;tfcd=0&amp;npa=0&amp;sz=640x480%7C728x90&amp;gdfp_req=1&amp;unviewed_position_start=1&amp;output=vast&amp;env=vp&amp;impl=s&amp;correlator=&amp;vad_type=linear" />
+        android:text="https://pubads.g.doubleclick.net/gampad/ads?iu=/10236567/moloco_demo&amp;tfcd=0&amp;npa=0&amp;sz=640x480%7C728x90&amp;gdfp_req=1&amp;unviewed_position_start=1&amp;output=vast&amp;env=vp&amp;impl=s&amp;correlator=%%CACHEBUSTER%%&amp;vad_type=linear" />
 
     <!-- Sample Button -->
     <Button

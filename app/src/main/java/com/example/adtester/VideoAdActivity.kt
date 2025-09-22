@@ -96,13 +96,16 @@ class VideoAdActivity : AppCompatActivity() {
         }
         
         btnSampleVast1.setOnClickListener {
-            val vastTag = "https://pubads.g.doubleclick.net/gampad/ads?iu=/10236567/moloco_demo&tfcd=0&npa=0&sz=640x480%7C728x90&gdfp_req=1&unviewed_position_start=1&output=vast&env=vp&impl=s&correlator=&vad_type=linear"
+            val vastTag = "https://pubads.g.doubleclick.net/gampad/ads?iu=/10236567/moloco_demo&tfcd=0&npa=0&sz=640x480%7C728x90&gdfp_req=1&unviewed_position_start=1&output=vast&env=vp&impl=s&correlator=%%CACHEBUSTER%%&vad_type=linear"
             etAdTagUrl.setText(vastTag)
         }
     }
     
     private fun loadVastAd(adTagUrl: String) {
         try {
+            // Replace cache buster macro with current timestamp
+            val finalAdTagUrl = adTagUrl.replace("%%CACHEBUSTER%%", System.currentTimeMillis().toString())
+            
             val contentVideoUrl = "https://storage.googleapis.com/gvabox/media/samples/stock.mp4"
             
             player.stop()
@@ -111,7 +114,7 @@ class VideoAdActivity : AppCompatActivity() {
             val mediaItem = MediaItem.Builder()
                 .setUri(contentVideoUrl)
                 .setAdsConfiguration(
-                    MediaItem.AdsConfiguration.Builder(android.net.Uri.parse(adTagUrl))
+                    MediaItem.AdsConfiguration.Builder(android.net.Uri.parse(finalAdTagUrl))
                         .build()
                 )
                 .build()
@@ -120,7 +123,7 @@ class VideoAdActivity : AppCompatActivity() {
             player.prepare()
             player.playWhenReady = true
             
-            Toast.makeText(this, "Loading VAST ad...", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Loading VAST ad with cache buster: ${System.currentTimeMillis()}", Toast.LENGTH_SHORT).show()
             
         } catch (e: Exception) {
             Toast.makeText(this, "Error loading ad: ${e.message}", Toast.LENGTH_LONG).show()
