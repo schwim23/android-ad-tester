@@ -16,6 +16,8 @@ import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.common.Player
 import androidx.media3.common.PlaybackException
 import android.widget.EditText
+import android.os.Handler
+import android.os.Looper
 
 class VideoAdActivity : AppCompatActivity() {
     
@@ -26,6 +28,8 @@ class VideoAdActivity : AppCompatActivity() {
     private lateinit var btnBack: Button
     private lateinit var btnSampleVast1: Button
     private var adsLoader: ImaAdsLoader? = null
+    private val handler = Handler(Looper.getMainLooper())
+    private var playbackMonitor: Runnable? = null
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,6 +98,11 @@ class VideoAdActivity : AppCompatActivity() {
             
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 android.util.Log.d("VideoAdActivity", "Is playing changed: $isPlaying")
+                if (isPlaying) {
+                    startPlaybackMonitoring()
+                } else {
+                    stopPlaybackMonitoring()
+                }
             }
             
             override fun onTimelineChanged(timeline: androidx.media3.common.Timeline, reason: Int) {
@@ -101,12 +110,33 @@ class VideoAdActivity : AppCompatActivity() {
                 for (i in 0 until timeline.windowCount) {
                     val window = androidx.media3.common.Timeline.Window()
                     timeline.getWindow(i, window)
-                    android.util.Log.d("VideoAdActivity", "Window $i: isAd=${window.isAd}, duration=${window.durationMs}ms")
+                    android.util.Log.d("VideoAdActivity", "Window $i: duration=${window.durationMs}ms, defaultPositionMs=${window.defaultPositionMs}")
                 }
             }
         })
         
         playerView.player = player
+    }
+    
+    private fun startPlaybackMonitoring() {
+        stopPlaybackMonitoring() // Stop any existing monitoring
+        playbackMonitor = object : Runnable {
+            override fun run() {
+                if (player.isPlaying) {
+                    val isPlayingAd = player.isPlayingAd
+                    val currentWindowIndex = player.currentWindowIndex
+                    val currentPosition = player.currentPosition
+                    android.util.Log.d("VideoAdActivity", "Monitoring - isAd: $isPlayingAd, window: $currentWindowIndex, position: ${currentPosition}ms")
+                    handler.postDelayed(this, 2000) // Check every 2 seconds
+                }
+            }
+        }
+        handler.post(playbackMonitor!!)
+    }
+    
+    private fun stopPlaybackMonitoring() {
+        playbackMonitor?.let { handler.removeCallbacks(it) }
+        playbackMonitor = null
     }
     
     private fun setupClickListeners() {
@@ -169,6 +199,7 @@ class VideoAdActivity : AppCompatActivity() {
     
     override fun onDestroy() {
         super.onDestroy()
+        stopPlaybackMonitoring()
         adsLoader?.setPlayer(null)
         adsLoader?.release()
         player.release()
